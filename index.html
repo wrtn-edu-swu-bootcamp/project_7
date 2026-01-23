@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DietMate - 스마트 식단 관리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 사이드 네비게이션 -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🥗</span>
+                <span class="logo-text">DietMate</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>대시보드</span>
+                </li>
+                <li class="nav-item" data-section="profile">
+                    <span class="nav-icon">👤</span>
+                    <span>내 정보</span>
+                </li>
+                <li class="nav-item" data-section="recipes">
+                    <span class="nav-icon">🍳</span>
+                    <span>레시피</span>
+                </li>
+                <li class="nav-item" data-section="meal-plan">
+                    <span class="nav-icon">📅</span>
+                    <span>오늘의 식단</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <!-- 대시보드 섹션 -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1>오늘의 현황</h1>
+                    <p class="date-display"></p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- 칼로리 카드 -->
+                    <div class="card calorie-card">
+                        <div class="card-header">
+                            <h3>칼로리 현황</h3>
+                        </div>
+                        <div class="calorie-circle-container">
+                            <svg class="calorie-circle" viewBox="0 0 200 200">
+                                <circle class="circle-bg" cx="100" cy="100" r="85"/>
+                                <circle class="circle-progress" cx="100" cy="100" r="85"/>
+                            </svg>
+                            <div class="calorie-info">
+                                <span class="calorie-consumed">0</span>
+                                <span class="calorie-label">/ <span class="calorie-goal">0</span> kcal</span>
+                            </div>
+                        </div>
+                        <div class="calorie-remaining">
+                            <span class="remaining-label">남은 칼로리</span>
+                            <span class="remaining-value">0 kcal</span>
+                        </div>
+                    </div>
+
+                    <!-- 영양소 카드 -->
+                    <div class="card nutrients-card">
+                        <div class="card-header">
+                            <h3>영양소 섭취</h3>
+                        </div>
+                        <div class="nutrients-list">
+                            <div class="nutrient-item">
+                                <div class="nutrient-header">
+                                    <span class="nutrient-name">🍞 탄수화물</span>
+                                    <span class="nutrient-values"><span class="carbs-consumed">0</span>g / <span class="carbs-goal">0</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress carbs-progress"></div>
+                                </div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-header">
+                                    <span class="nutrient-name">🥩 단백질</span>
+                                    <span class="nutrient-values"><span class="protein-consumed">0</span>g / <span class="protein-goal">0</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress protein-progress"></div>
+                                </div>
+                            </div>
+                            <div class="nutrient-item">
+                                <div class="nutrient-header">
+                                    <span class="nutrient-name">🥑 지방</span>
+                                    <span class="nutrient-values"><span class="fat-consumed">0</span>g / <span class="fat-goal">0</span>g</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress fat-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 목표 카드 -->
+                    <div class="card goal-card">
+                        <div class="card-header">
+                            <h3>내 목표</h3>
+                        </div>
+                        <div class="goal-info">
+                            <div class="goal-item">
+                                <span class="goal-label">현재 체중</span>
+                                <span class="goal-value current-weight">--</span>
+                            </div>
+                            <div class="goal-arrow">→</div>
+                            <div class="goal-item">
+                                <span class="goal-label">목표 체중</span>
+                                <span class="goal-value target-weight">--</span>
+                            </div>
+                        </div>
+                        <div class="goal-diff">
+                            <span class="diff-text">목표까지 <span class="weight-diff">--</span></span>
+                        </div>
+                    </div>
+
+                    <!-- 오늘의 식사 요약 -->
+                    <div class="card meals-summary-card">
+                        <div class="card-header">
+                            <h3>오늘 먹은 음식</h3>
+                            <button class="add-meal-btn" onclick="showAddMealModal()">+ 추가</button>
+                        </div>
+                        <div class="meals-list" id="todayMealsList">
+                            <div class="empty-meals">
+                                <span>🍽️</span>
+                                <p>아직 기록된 식사가 없어요</p>
+                                <p class="hint">식사를 추가해보세요!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 내 정보 섹션 -->
+            <section id="profile" class="section">
+                <div class="section-header">
+                    <h1>내 정보 설정</h1>
+                    <p>정확한 칼로리 계산을 위해 정보를 입력해주세요</p>
+                </div>
+
+                <div class="profile-form-container">
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>성별</label>
+                                <div class="gender-selector">
+                                    <input type="radio" id="male" name="gender" value="male">
+                                    <label for="male" class="gender-option">
+                                        <span class="gender-icon">👨</span>
+                                        <span>남성</span>
+                                    </label>
+                                    <input type="radio" id="female" name="gender" value="female">
+                                    <label for="female" class="gender-option">
+                                        <span class="gender-icon">👩</span>
+                                        <span>여성</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="age">나이</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="age" name="age" min="10" max="100" placeholder="25">
+                                    <span class="unit">세</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="height">키</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="height" name="height" min="100" max="250" placeholder="170">
+                                    <span class="unit">cm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weight">현재 체중</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="weight" name="weight" min="30" max="200" step="0.1" placeholder="70">
+                                    <span class="unit">kg</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="targetWeight">목표 체중</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="targetWeight" name="targetWeight" min="30" max="200" step="0.1" placeholder="65">
+                                    <span class="unit">kg</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activity">활동량</label>
+                            <select id="activity" name="activity">
+                                <option value="1.2">거의 운동 안함 (좌식 생활)</option>
+                                <option value="1.375">가벼운 운동 (주 1-3회)</option>
+                                <option value="1.55" selected>보통 운동 (주 3-5회)</option>
+                                <option value="1.725">활발한 운동 (주 6-7회)</option>
+                                <option value="1.9">매우 활발 (하루 2회 운동)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goal">다이어트 목표</label>
+                            <select id="goal" name="goal">
+                                <option value="lose-fast">빠른 감량 (-1kg/주)</option>
+                                <option value="lose" selected>일반 감량 (-0.5kg/주)</option>
+                                <option value="maintain">체중 유지</option>
+                                <option value="gain">체중 증가 (+0.5kg/주)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="save-btn">저장하기</button>
+                    </form>
+
+                    <div class="calculation-result" id="calculationResult">
+                        <h3>📊 맞춤 분석 결과</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span class="result-label">기초대사량 (BMR)</span>
+                                <span class="result-value" id="bmrValue">-- kcal</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">일일 소비 칼로리 (TDEE)</span>
+                                <span class="result-value" id="tdeeValue">-- kcal</span>
+                            </div>
+                            <div class="result-item highlight">
+                                <span class="result-label">목표 달성 권장 칼로리</span>
+                                <span class="result-value" id="targetCalories">-- kcal</span>
+                            </div>
+                        </div>
+                        <div class="macros-recommendation">
+                            <h4>권장 영양소 배분</h4>
+                            <div class="macro-items">
+                                <div class="macro-item carbs">
+                                    <span class="macro-name">탄수화물</span>
+                                    <span class="macro-value" id="recCarbs">--g</span>
+                                    <span class="macro-percent">45%</span>
+                                </div>
+                                <div class="macro-item protein">
+                                    <span class="macro-name">단백질</span>
+                                    <span class="macro-value" id="recProtein">--g</span>
+                                    <span class="macro-percent">30%</span>
+                                </div>
+                                <div class="macro-item fat">
+                                    <span class="macro-name">지방</span>
+                                    <span class="macro-value" id="recFat">--g</span>
+                                    <span class="macro-percent">25%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 레시피 섹션 -->
+            <section id="recipes" class="section">
+                <div class="section-header">
+                    <h1>건강한 레시피</h1>
+                    <p>다이어트에 좋은 맛있는 레시피들</p>
+                </div>
+
+                <div class="recipe-filters">
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button class="filter-btn" data-filter="low-cal">저칼로리</button>
+                    <button class="filter-btn" data-filter="high-protein">고단백</button>
+                    <button class="filter-btn" data-filter="low-carb">저탄수화물</button>
+                </div>
+
+                <div class="recipes-grid" id="recipesGrid">
+                    <!-- 레시피 카드들이 JS로 삽입됨 -->
+                </div>
+            </section>
+
+            <!-- 오늘의 식단 섹션 -->
+            <section id="meal-plan" class="section">
+                <div class="section-header">
+                    <h1>오늘의 식단 추천</h1>
+                    <p>목표 칼로리에 맞춘 하루 식단</p>
+                </div>
+
+                <div class="meal-plan-container">
+                    <div class="meal-plan-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">목표 칼로리</span>
+                            <span class="summary-value" id="planTargetCal">-- kcal</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">식단 칼로리</span>
+                            <span class="summary-value" id="planTotalCal">-- kcal</span>
+                        </div>
+                    </div>
+
+                    <button class="generate-plan-btn" onclick="generateMealPlan()">
+                        🎲 새로운 식단 추천받기
+                    </button>
+
+                    <div class="meal-plan-grid" id="mealPlanGrid">
+                        <div class="meal-time-card">
+                            <div class="meal-time-header breakfast">
+                                <span class="meal-time-icon">🌅</span>
+                                <span class="meal-time-name">아침</span>
+                            </div>
+                            <div class="meal-time-content" id="breakfastPlan">
+                                <p class="empty-plan">식단을 추천받아보세요</p>
+                            </div>
+                        </div>
+
+                        <div class="meal-time-card">
+                            <div class="meal-time-header lunch">
+                                <span class="meal-time-icon">☀️</span>
+                                <span class="meal-time-name">점심</span>
+                            </div>
+                            <div class="meal-time-content" id="lunchPlan">
+                                <p class="empty-plan">식단을 추천받아보세요</p>
+                            </div>
+                        </div>
+
+                        <div class="meal-time-card">
+                            <div class="meal-time-header dinner">
+                                <span class="meal-time-icon">🌙</span>
+                                <span class="meal-time-name">저녁</span>
+                            </div>
+                            <div class="meal-time-content" id="dinnerPlan">
+                                <p class="empty-plan">식단을 추천받아보세요</p>
+                            </div>
+                        </div>
+
+                        <div class="meal-time-card">
+                            <div class="meal-time-header snack">
+                                <span class="meal-time-icon">🍎</span>
+                                <span class="meal-time-name">간식</span>
+                            </div>
+                            <div class="meal-time-content" id="snackPlan">
+                                <p class="empty-plan">식단을 추천받아보세요</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 음식 추가 모달 -->
+    <div class="modal" id="addMealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>음식 추가</h2>
+                <button class="modal-close" onclick="closeAddMealModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="meal-type-selector">
+                    <button class="meal-type-btn active" data-type="breakfast">🌅 아침</button>
+                    <button class="meal-type-btn" data-type="lunch">☀️ 점심</button>
+                    <button class="meal-type-btn" data-type="dinner">🌙 저녁</button>
+                    <button class="meal-type-btn" data-type="snack">🍎 간식</button>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" id="foodSearch" placeholder="음식 검색..." oninput="searchFood()">
+                </div>
+
+                <div class="food-list" id="foodList">
+                    <!-- 음식 목록이 JS로 삽입됨 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 레시피 상세 모달 -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content recipe-modal-content">
+            <div class="modal-header">
+                <h2 id="recipeModalTitle">레시피</h2>
+                <button class="modal-close" onclick="closeRecipeModal()">×</button>
+            </div>
+            <div class="modal-body" id="recipeModalBody">
+                <!-- 레시피 상세 내용 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
